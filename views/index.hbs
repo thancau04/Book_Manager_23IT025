@@ -1,0 +1,71 @@
+{{#if flash}}
+<div class="alert alert-{{flash.type}}">{{flash.message}}</div>
+{{/if}}
+
+{{#if errors.length}}
+<div class="alert alert-error">
+  <ul>{{#each errors}}<li>{{this}}</li>{{/each}}</ul>
+</div>
+{{/if}}
+
+<section class="card">
+  <h2>Thêm sách mới</h2>
+  <form id="bookForm" method="POST" action="/books" novalidate data-prefix="{{prefix}}">
+    <div class="grid">
+      <label>Mã sách (bắt đầu bằng "{{prefix}}")
+        <input type="text" name="bookCode" id="bookCode" value="{{form.bookCode}}" placeholder="{{prefix}}001" required>
+        <small class="field-error" id="bookCodeError"></small>
+      </label>
+      <label>Tên sách
+        <input type="text" name="title" value="{{form.title}}" required>
+      </label>
+      <label>Tác giả
+        <input type="text" name="author" value="{{form.author}}" required>
+      </label>
+      <label>Giá gốc
+        <input type="number" name="originalPrice" id="originalPrice" value="{{form.originalPrice}}" min="0" step="any"
+          required>
+      </label>
+    </div>
+    <p class="hint">Giá sau thuế (VAT 9%) = Giá gốc × 1.09 — do server tự tính.</p>
+    <button type="submit">Thêm sách</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Danh sách sách</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Mã sách</th>
+          <th>Tên sách</th>
+          <th>Tác giả</th>
+          <th class="num">Giá gốc</th>
+          <th class="num">VAT</th>
+          <th class="num">Giá sau thuế</th>
+          <th>Ngày tạo</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each books}}
+        <tr>
+          <td>{{inc @index}}</td>
+          <td>{{this.bookCode}}</td>
+          <td>{{this.title}}</td>
+          <td>{{this.author}}</td>
+          <td class="num">{{money this.originalPrice}}</td>
+          <td class="num">{{this.vatRate}}%</td>
+          <td class="num"><strong>{{money this.finalPrice}}</strong></td>
+          <td>{{date this.createdAt}}</td>
+        </tr>
+        {{else}}
+        <tr>
+          <td colspan="8" class="empty">Chưa có sách nào.</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</section>
